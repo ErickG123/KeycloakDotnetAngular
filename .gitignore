@@ -1,0 +1,72 @@
+# =============================================================================
+# DEFINITIVE UNIFIED GITIGNORE
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# .NET / C# / Visual Studio / Rider
+# -----------------------------------------------------------------------------
+**/bin/
+**/obj/
+**/out/
+**/publish/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svclog
+*.sublime-workspace
+
+# Code Coverage / Test Artifacts
+**/TestResults/
+**/coverage/
+*.coverage
+*.coveragecleared
+
+# Entity Framework Core Migrations Artifacts
+**/efbundle
+
+# -----------------------------------------------------------------------------
+# Angular / Node.js / Web
+# -----------------------------------------------------------------------------
+**/node_modules/
+**/.angular/
+**/dist/
+**/.npm/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnpm-debug.log*
+**/.nx/
+
+# IDE / Editor configuration
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# -----------------------------------------------------------------------------
+# OS Generated Files
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Docker, Databases & Environment Configs
+# -----------------------------------------------------------------------------
+**/*.env
+!**/*.env.example
+**/pgdata/
+**/keycloak_data/

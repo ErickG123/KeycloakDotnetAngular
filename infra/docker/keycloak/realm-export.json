@@ -1,0 +1,137 @@
+{
+  "realm": "gestao-realm",
+  "displayName": "Gestao Realm",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "gestao_user",
+        "description": "Role padrão para usuários comuns do sistema"
+      },
+      {
+        "name": "gestao_admin",
+        "description": "Role para administradores com acesso total"
+      }
+    ]
+  },
+  "clientScopes": [
+    {
+      "name": "gestao-api-audience",
+      "description": "Adiciona a audiencia gestao-api no Access Token",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "gestao-api-audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "gestao-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "web-origins",
+    "acr",
+    "roles",
+    "profile",
+    "email",
+    "gestao-api-audience"
+  ],
+  "clients": [
+    {
+      "clientId": "gestao-frontend",
+      "name": "Gestão Frontend (Angular)",
+      "description": "SPA Client Angular com PKCE",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "email",
+        "gestao-api-audience"
+      ]
+    },
+    {
+      "clientId": "gestao-api",
+      "name": "Gestão API (.NET)",
+      "description": "Resource Server Backend API",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "user.comum",
+      "enabled": true,
+      "email": "user.comum@empresa.com",
+      "firstName": "Usuario",
+      "lastName": "Comum",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "gestao_user"
+      ]
+    },
+    {
+      "username": "admin.sistema",
+      "enabled": true,
+      "email": "admin.sistema@empresa.com",
+      "firstName": "Admin",
+      "lastName": "Sistema",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "gestao_user",
+        "gestao_admin"
+      ]
+    }
+  ]
+}

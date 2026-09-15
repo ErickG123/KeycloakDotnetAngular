@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Gestao.API/Gestao.API.csproj" />
+  <Project Path="Gestao.Application.Tests/Gestao.Application.Tests.csproj" />
+  <Project Path="Gestao.Application/Gestao.Application.csproj" />
+  <Project Path="Gestao.Domain/Gestao.Domain.csproj" />
+  <Project Path="Gestao.Infrastructure/Gestao.Infrastructure.csproj" />
+</Solution>
