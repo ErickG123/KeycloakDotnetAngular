@@ -1,38 +1,36 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
 import { Router } from '@angular/router';
-import { catchError, from, switchMap, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const keycloak = inject(KeycloakService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Intercepta chamadas direcionadas para a API backend (tanto http://localhost:5000/api/ quanto URLs relativas /api/)
+  // Intercepta requisições destinadas à API backend (POST/GET/DELETE)
   if (req.url.includes('/api/') || req.url.includes('localhost:5000')) {
-    return from(Promise.resolve(keycloak.isLoggedIn())).pipe(
-      switchMap(isLoggedIn => {
-        if (isLoggedIn) {
-          return from(Promise.resolve(keycloak.getToken())).pipe(
-            switchMap(token => {
-              console.debug('🌐 [authInterceptor] Anexando Bearer Token na requisição:', req.url);
-              const authReq = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${token}`
-                }
-              });
-              return next(authReq);
-            })
-          );
+    const token = authService.getAccessToken();
+
+    let authReq = req;
+    if (token) {
+      console.debug(`🌐 [authInterceptor] Injecting Bearer Token into [${req.method}] ${req.url}`);
+      authReq = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
         }
-        console.warn('⚠️ [authInterceptor] Requisição para API disparada sem usuário logado:', req.url);
-        return next(req);
-      }),
+      });
+    } else {
+      console.warn(`⚠️ [authInterceptor] Warning: Sending [${req.method}] ${req.url} without Bearer Token.`);
+    }
+
+    return next(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          console.error('⛔ [authInterceptor] Resposta 401 Unauthorized recebida do Backend .NET.');
+          console.error('⛔ [authInterceptor] 401 Unauthorized do Backend. Redirecionando para /login...');
+          authService.logout();
         } else if (error.status === 403) {
-          console.error('⛔ [authInterceptor] Resposta 403 Forbidden recebida do Backend .NET. Redirecionando para /access-denied');
+          console.error('⛔ [authInterceptor] 403 Forbidden do Backend. Redirecionando para /access-denied...');
           router.navigate(['/access-denied']);
         }
         return throwError(() => error);

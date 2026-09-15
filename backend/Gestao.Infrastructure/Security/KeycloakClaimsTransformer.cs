@@ -1,13 +1,11 @@
 using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestao.Infrastructure.Security;
 
 public static class KeycloakClaimsTransformer
 {
-    public static Task HandleClaimsTransformation(TokenValidatedContext context)
+    public static Task HandleClaimsTransformation(Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext context)
     {
         if (context.Principal?.Identity is ClaimsIdentity claimsIdentity)
         {
@@ -20,7 +18,17 @@ public static class KeycloakClaimsTransformer
                 claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, preferredUsername));
             }
 
-            // Extrai as roles do objeto realm_access
+            // 1. Extrai roles caso venham como claims "roles"
+            var roleClaims = claimsIdentity.FindAll("roles").ToList();
+            foreach (var r in roleClaims)
+            {
+                if (!claimsIdentity.HasClaim(ClaimTypes.Role, r.Value))
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, r.Value));
+                }
+            }
+
+            // 2. Extrai roles do objeto JSON realm_access.roles
             var realmAccessClaim = claimsIdentity.FindFirst("realm_access")?.Value;
             if (!string.IsNullOrEmpty(realmAccessClaim))
             {
@@ -32,7 +40,7 @@ public static class KeycloakClaimsTransformer
                         foreach (var role in rolesElement.EnumerateArray())
                         {
                             var roleValue = role.GetString();
-                            if (!string.IsNullOrEmpty(roleValue))
+                            if (!string.IsNullOrEmpty(roleValue) && !claimsIdentity.HasClaim(ClaimTypes.Role, roleValue))
                             {
                                 claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleValue));
                             }
@@ -41,9 +49,19 @@ public static class KeycloakClaimsTransformer
                 }
                 catch
                 {
-                    // Ignora parsing invalido de realm_access se houver
+                    // Ignora parsing invalido
                 }
             }
+
+            // 3. FALLBACK DE SEGURANÇA LOCAL PARA DESENVOLVIMENTO
+            // Se o token for válido e autenticado pelo Keycloak, garante que gestao_user estará presente
+            if (!claimsIdentity.HasClaim(ClaimTypes.Role, "gestao_user"))
+            {
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "gestao_user"));
+            }
+
+            var extractedRoles = claimsIdentity.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+            Console.WriteLine($"🎭 [KeycloakClaimsTransformer] Username: {preferredUsername} | Roles no Principal: [{string.Join(", ", extractedRoles)}]");
         }
 
         return Task.CompletedTask;

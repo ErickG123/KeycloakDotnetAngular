@@ -1,0 +1,106 @@
+<main class="login-page">
+  <!-- Lado Esquerdo: Painel de Branding (Visível em Desktop/Tablet) -->
+  <section class="branding-panel">
+    <div class="branding-content">
+      <div class="logo-container">
+        <svg class="system-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span class="logo-text">GestãoApp</span>
+      </div>
+      <h1 class="welcome-title">Transforme a gestão do seu negócio com eficiência.</h1>
+      <p class="welcome-description">Plataforma integrada com arquitetura moderna, controle de acesso seguro OIDC e relatórios em tempo real.</p>
+    </div>
+  </section>
+
+  <!-- Lado Direito: Container do Formulário -->
+  <section class="form-panel">
+    <div class="form-container">
+      <header class="form-header">
+        <h2>Acesse sua conta</h2>
+        <p>Informe suas credenciais para acessar o painel</p>
+      </header>
+
+      <!-- Alerta de Erro de Conexão ou Credenciais -->
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert" aria-live="assertive">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Campo Usuário -->
+        <div class="form-group">
+          <label for="username">Nome de usuário</label>
+          <div class="input-wrapper">
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Digite seu usuário (ex: admin.sistema)"
+              autocomplete="username"
+              [attr.aria-invalid]="isFieldInvalid('username')"
+              [class.has-error]="isFieldInvalid('username')"
+            />
+          </div>
+          <span class="field-error-message" *ngIf="isFieldInvalid('username')" id="username-error">
+            O nome de usuário é obrigatório.
+          </span>
+        </div>
+
+        <!-- Campo Senha -->
+        <div class="form-group">
+          <label for="password">Senha de acesso</label>
+          <div class="input-wrapper">
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              [attr.aria-invalid]="isFieldInvalid('password')"
+              [class.has-error]="isFieldInvalid('password')"
+            />
+          </div>
+          <span class="field-error-message" *ngIf="isFieldInvalid('password')" id="password-error">
+            A senha é obrigatória.
+          </span>
+        </div>
+
+        <!-- Botão Submit com Feedback Visual -->
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="loginForm.invalid || isLoading"
+          [attr.aria-busy]="isLoading"
+        >
+          <span *ngIf="!isLoading">Entrar no sistema</span>
+          <span *ngIf="isLoading" class="btn-loading-content">
+            <span class="spinner" aria-hidden="true"></span>
+            Autenticando...
+          </span>
+        </button>
+      </form>
+
+      <!-- Card de Usuários de Teste Rápidos -->
+      <footer class="test-credentials-card">
+        <span class="test-title">Credenciais de Teste Rápido:</span>
+        <div class="credentials-list">
+          <div class="credential-item">
+            <span class="role-tag user-tag">Usuário</span>
+            <code>user.comum</code> / <code>user123</code>
+          </div>
+          <div class="credential-item">
+            <span class="role-tag admin-tag">Admin</span>
+            <code>admin.sistema</code> / <code>admin123</code>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </section>
+</main>

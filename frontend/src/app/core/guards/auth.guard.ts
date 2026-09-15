@@ -1,23 +1,14 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = async (route, state) => {
+export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
 
-  // Se a URL contém parâmetros de callback do Keycloak (?code= / ?state=), permite a navegação sem disparar re-login
-  if (window.location.search.includes('code=') || window.location.search.includes('state=')) {
-    return true;
-  }
-
-  const isLoggedIn = await authService.isLoggedIn();
-
-  console.log('[AuthGuard] Rota requisitada:', state.url);
-  console.log('[AuthGuard] Autenticado?:', isLoggedIn);
-
-  if (!isLoggedIn) {
-    console.warn('[AuthGuard] Usuário não autenticado. Redirecionando para login no Keycloak...');
-    await authService.login(window.location.origin + state.url);
+  if (!authService.isLoggedIn()) {
+    console.warn('[AuthGuard] Usuário não autenticado no storage. Redirecionando para /login...');
+    router.navigate(['/login']);
     return false;
   }
 

@@ -8,12 +8,12 @@ import { AuthService } from './core/services/auth.service';
   standalone: true,
   imports: [RouterOutlet, RouterLink, CommonModule],
   template: `
-    <header style="background: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+    <header *ngIf="isLoggedIn" style="background: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
       <h1 style="margin: 0; font-size: 20px;">Sistema de Gestão</h1>
       <nav style="display: flex; gap: 15px; align-items: center;">
         <a routerLink="/documentos" style="color: white; text-decoration: none;">Documentos</a>
         
-        <!-- Renderização condicional defensiva: Exibe o Painel Admin apenas se o usuário tiver a role gestao_admin -->
+        <!-- Renderização reativa do Painel Admin escutando o Signal currentUserRoles -->
         <a *ngIf="isAdmin" routerLink="/admin" style="color: #ffc107; font-weight: bold; text-decoration: none;">
           Painel Admin
         </a>
@@ -30,6 +30,10 @@ import { AuthService } from './core/services/auth.service';
 })
 export class AppComponent {
   private authService = inject(AuthService);
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   get isAdmin(): boolean {
     return this.authService.hasRole('gestao_admin');

@@ -57,13 +57,13 @@
     {
       "clientId": "gestao-frontend",
       "name": "Gestão Frontend (Angular)",
-      "description": "SPA Client Angular com PKCE",
+      "description": "SPA Client Angular com Direct Access Grants",
       "enabled": true,
       "publicClient": true,
       "protocol": "openid-connect",
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "redirectUris": [
         "http://localhost:4200/*"
@@ -71,9 +71,6 @@
       "webOrigins": [
         "http://localhost:4200"
       ],
-      "attributes": {
-        "pkce.code.challenge.method": "S256"
-      },
       "defaultClientScopes": [
         "web-origins",
         "acr",
