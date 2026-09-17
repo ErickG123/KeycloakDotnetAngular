@@ -1,7 +1,7 @@
 # 🚀 Gestão App - Monorepo (.NET 10, Angular, Keycloak, Docker)
 
 ![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)
-![Angular](https://img.shields.io/badge/Angular-19-DD0031?logo=angular)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular)
 ![Keycloak](https://img.shields.io/badge/Keycloak-24.0-4D5460?logo=redhat)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
